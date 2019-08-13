@@ -1,22 +1,36 @@
 var topics = ['Hannibal Burress', 'Pete Holmes', 'Eric Andre', 'Ryan Hamilton', 'Bill Burr', 'Gary Gullman', 'Aziz Ansari', 'Anthony Jeselnik', 'Dave Chapelle', 'Brian Reagan']
 
 
-for (i = 0; i < topics.length; i++){
-    
-    $("#topics").append('<button ' + 'data-comedian="' + topics[i] + '">' + topics[i] + '</button>');
-    // $("button").("data-comedian", topics[i])
+    for (i = 0; i < topics.length; i++) {
+
+        function buttonCreator() {
+            $("#topics").append('<button ' + 'data-comedian="' + topics[i] + '">' + topics[i] + '</button>');
+         }
+         buttonCreator();
 }
+
+
+
+$("#submit").on('click', function () {
+    var newName = $("#add-name").val();
+    console.log(newName);
+   
+    $("#topics").append('<button ' + 'data-comedian="' + newName + '">' + newName + '</button>');
+    return false;
+
+
+})
 
 
 
 // $("button").attr("data-comedian", "Hannibal Burress");
 
 
-$(document).on('click', 'button', function (){
+$(document).on('click', 'button', function () {
     var comedian = $(this).attr("data-comedian");
 
     var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
-    comedian + "&api_key=hVU4Q9qva6zSLrNJYez5dI7hZJ6m0jZ6";
+        comedian + "&api_key=hVU4Q9qva6zSLrNJYez5dI7hZJ6m0jZ6";
 
     $("#gifs-here").html("");
 
@@ -25,13 +39,13 @@ $(document).on('click', 'button', function (){
         url: queryURL,
         method: "GET"
 
-    }).then(function(response){
-        
+    }).then(function (response) {
+
         var results = response.data;
         console.log(results);
 
-        for (i = 0; i < 10; i++){
-            if (results[i].rating !== "r"){
+        for (i = 0; i < 10; i++) {
+            if (results[i].rating !== "r") {
 
                 var gifDiv = $("<div>");
 
@@ -39,13 +53,13 @@ $(document).on('click', 'button', function (){
 
                 var p = $("<p>Rating: " + rating + "</p>");
 
-                var image = $("<img>"); 
+                var image = $("<img>");
 
                 image.attr("data-state", "still");
                 image.attr("data-still", results[i].images.fixed_height_still.url);
                 image.attr("data-animate", results[i].images.fixed_height.url);
                 image.attr("src", results[i].images.fixed_height_still.url);
-                image.attr("id", "gif")
+                image.attr('class', 'gif')
 
                 gifDiv.append(p);
                 gifDiv.append(image);
@@ -56,15 +70,15 @@ $(document).on('click', 'button', function (){
     })
 })
 
-$(document).on('click', '#gif', function(){
+$(document).on('click', '.gif', function () {
 
     var state = $(this).attr("data-state");
 
-    if (state === "still"){
+    if (state === "still") {
         $(this).attr("src", $(this).attr("data-animate"))
-        $(this).attr(state, "animate");
-    } else if (state === "animate"){
+        $(this).attr("data-state", "animate");
+    } else if (state === "animate") {
         $(this).attr("src", $(this).attr("data-still"))
-        $(this).attr(state, "still");
+        $(this).attr("data-state", "still");
     }
 })

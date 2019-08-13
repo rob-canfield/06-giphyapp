@@ -5,3 +5,11 @@ button {
     margin: 20px;
     display: inline;
 }
+
+form {
+    float: right;
+}
+
+#gifs-here {
+    float: left;
+}
