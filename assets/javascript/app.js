@@ -2,20 +2,23 @@ var topics = ['Hannibal Burress', 'Pete Holmes', 'Eric Andre', 'Ryan Hamilton', 
 
 
 for (i = 0; i < topics.length; i++){
-    var item = topics[i]
-    $("#topics").append("<button>" + item + "</button>");
+    
+    $("#topics").append('<button ' + 'data-comedian="' + topics[i] + '">' + topics[i] + '</button>');
+    // $("button").("data-comedian", topics[i])
 }
 
 
 
-$("button").attr("data-comedian", "Hannibal Burress");
+// $("button").attr("data-comedian", "Hannibal Burress");
 
 
-$("button").click(function (){
+$(document).on('click', 'button', function (){
     var comedian = $(this).attr("data-comedian");
 
     var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
     comedian + "&api_key=hVU4Q9qva6zSLrNJYez5dI7hZJ6m0jZ6";
+
+    $("#gifs-here").html("");
 
     $.ajax({
 
@@ -23,11 +26,11 @@ $("button").click(function (){
         method: "GET"
 
     }).then(function(response){
-        console.log(response.data);
-
+        
         var results = response.data;
+        console.log(results);
 
-        for (i = 0; i < results.length; i++){
+        for (i = 0; i < 10; i++){
             if (results[i].rating !== "r"){
 
                 var gifDiv = $("<div>");
@@ -38,7 +41,11 @@ $("button").click(function (){
 
                 var image = $("<img>"); 
 
-                image.attr("src", results[i].images.fixed_height_still.url)
+                image.attr("data-state", "still");
+                image.attr("data-still", results[i].images.fixed_height_still.url);
+                image.attr("data-animate", results[i].images.fixed_height.url);
+                image.attr("src", results[i].images.fixed_height_still.url);
+                image.attr("id", "gif")
 
                 gifDiv.append(p);
                 gifDiv.append(image);
@@ -47,9 +54,17 @@ $("button").click(function (){
             }
         }
     })
-
-
 })
 
+$(document).on('click', '#gif', function(){
 
+    var state = $(this).attr("data-state");
 
+    if (state === "still"){
+        $(this).attr("src", $(this).attr("data-animate"))
+        $(this).attr(state, "animate");
+    } else if (state === "animate"){
+        $(this).attr("src", $(this).attr("data-still"))
+        $(this).attr(state, "still");
+    }
+})
